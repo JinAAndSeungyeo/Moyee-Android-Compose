@@ -62,7 +62,7 @@ fun MainScreen() {
             startDestination = Screen.Map.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Map.route) { }
+            composable(Screen.Map.route) { PreviewMapContent() }
             composable(Screen.Chat.route) { }
             composable(Screen.Playlist.route) { }
             composable(Screen.User.route) { }
