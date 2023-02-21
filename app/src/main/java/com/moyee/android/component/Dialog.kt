@@ -10,9 +10,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.moyee.android.R
+import com.moyee.android.ui.theme.MoyeeTheme
 import com.moyee.android.ui.theme.Purple700
+import com.moyee.android.util.startSystemSettings
 
 // 직접 접근하지 말고, BaseDialog를 구현한 MoyeeDialog를 사용할 것
 @Composable
@@ -79,11 +85,63 @@ fun MoyeeDialog(
             Row {
                 if (negativeButtonName != null && onNegativeButtonClick != null) {
                     MoyeeTextButton(onClick = onNegativeButtonClick, text = negativeButtonName)
-                    Spacer(modifier = Modifier.weight(1f))
                 }
 
+                Spacer(modifier = Modifier.weight(1f))
                 MoyeeSubButton(onClick = onPositiveButtonClick, text = positiveButtonName)
             }
         }
+    }
+}
+
+/**
+ * 필수 권한 거부시 띄우는 다이얼로그
+ *
+ * @param permissionName 거부 당한 권한 이름
+ * */
+@Composable
+fun PermissionDeniedDialog(
+    onConfirm: () -> Unit,
+    permissionName: String,
+) {
+    MoyeeDialog(
+        positiveButtonName = stringResource(id = R.string.confirm),
+        onPositiveButtonClick = onConfirm,
+        message = stringResource(R.string.permission_denied_message, permissionName)
+    )
+}
+
+/**
+ * 권한 2번 거부/다시 묻지 않기 체크 후 거부시 띄우는 다이얼로그, 확인 버튼 클릭시 직접 안드로이드 설정창을 띄워 줌
+ * */
+@Composable
+fun CheckPermissionInSystemSettingsDialog() {
+    val context = LocalContext.current
+
+    MoyeeDialog(
+        positiveButtonName = stringResource(id = R.string.confirm),
+        onPositiveButtonClick = { context.startSystemSettings() }
+    ) {
+        Column {
+            Text(
+                text = stringResource(id = R.string.permission_system_settings_message),
+                style = MaterialTheme.typography.body1
+            )
+            Spacer(modifier = Modifier.padding(bottom = 16.dp))
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewMoyeeDialog() {
+    MoyeeTheme {
+        MoyeeDialog(
+            positiveButtonName = "화긴",
+            onPositiveButtonClick = {},
+            message = "대충 이런저런 메세지예요.dsfsdfdsfsadffsfdfs",
+            negativeButtonName = "ㄴㄴ",
+            onNegativeButtonClick = {}
+        )
     }
 }

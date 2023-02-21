@@ -36,6 +36,38 @@ fun Context.startSystemSettings() {
     }
 }
 
+/**
+ * 권한 허락 여부에 따른 분기 이벤트 처리를 하는 함수로,
+ * 권한을 전부 허용했을 때, 첫 번째 거부, 두 번째 거부시로 나누어져 각각의 이벤트를 처리함
+ *
+ * @param onAllPermissionGranted 모든 권한을 허용했을 때 실행되는 이벤트
+ * @param onFirstDenied 권한을 첫 번째 거부했을 때 실행되는 이벤트, 이벤트를 설정하지 않으면 기본 다이얼로그를 띄움
+ * @param onSecondDenied 권한을 두 번째 거부했을 때 실행되는 이벤트, 이벤트를 설정하지 않으면 기본 다이얼로그를 띄움
+ * @param permissionName 확인할 권한의 이름
+ * */
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun MultiplePermissionsState.ProcessPermissionRequest(
+    onAllPermissionGranted: @Composable () -> Unit,
+    onFirstDenied: (@Composable () -> Unit)? = null,
+    onSecondDenied: (@Composable () -> Unit)? = null,
+    permissionName: String,
+) {
+    when {
+        allPermissionsGranted -> onAllPermissionGranted.invoke()
+
+        shouldShowRationale -> onFirstDenied?.let {
+            PermissionDeniedDialog(
+                onConfirm = { launchMultiplePermissionRequest() },
+                permissionName = permissionName
+            )
+        }
+
+        !allPermissionsGranted && !shouldShowRationale ->
+            onSecondDenied?.let { CheckPermissionInSystemSettingsDialog() }
+    }
+}
+
 enum class MoyeePermission(val permissionName: String, val permissions: List<String>) {
     LOCATION(
         "위치",
