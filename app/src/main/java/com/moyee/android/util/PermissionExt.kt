@@ -8,22 +8,22 @@ import android.provider.Settings
 import androidx.core.content.ContextCompat
 
 /**
- * 권한 체크
+ * 다중 권한 체크
  *
- * @param moyeePermission 체크할 권한
- * @return [String] 허용되지 않은 권한의 이름을 반환, 모두 허용되었다면 null
+ * @param permissions 체크할 권한들
+ * @return [Boolean] 권한 허용 여부
  * */
-fun Context.checkPermissions(moyeePermission: MoyeePermission): String? =
-    moyeePermission.run {
-        permissions.forEach { permission ->
-            if (ContextCompat.checkSelfPermission(
-                    this@checkPermissions,
-                    permission
-                ) == PackageManager.PERMISSION_DENIED
-            ) permissionName
-        }
-        null
-    }
+fun Context.checkPermissions(permissions: List<String>): Boolean =
+    permissions.all { permission -> checkPermission(permission) }
+
+/**
+ * 단일 권한 체크
+ *
+ * @param permission 체크할 권한
+ * @return [Boolean] 권한 허용 여부
+ * */
+fun Context.checkPermission(permission: String): Boolean =
+    ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_DENIED
 
 /**
  * 안드로이드 시스템 설정 앱을 실행함
