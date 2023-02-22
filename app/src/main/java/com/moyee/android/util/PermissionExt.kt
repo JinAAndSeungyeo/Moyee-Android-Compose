@@ -69,7 +69,7 @@ fun MultiplePermissionsState.ProcessPermissionRequest(
 }
 
 enum class MoyeePermission(val permissionName: String, val permissions: List<String>) {
-    LOCATION(
+    FOREGROUND_LOCATION(
         "위치",
         listOf(
             android.Manifest.permission.ACCESS_FINE_LOCATION,
