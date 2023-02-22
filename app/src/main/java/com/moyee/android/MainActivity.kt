@@ -5,13 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Chat
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.QueueMusic
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
@@ -22,27 +22,50 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.moyee.android.ui.theme.MoyeeTheme
+import com.moyee.android.util.MoyeePermission
+import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        Timber.plant(Timber.DebugTree())
+
         setContent {
             MoyeeTheme {
-                MainScreen()
+                MoyeeApp()
             }
         }
     }
 }
 
 @Composable
+fun MoyeeApp(viewModel: MainViewModel = viewModel()) {
+    val isFirstAccess by viewModel.isFirstAccess.collectAsState()
+    var showMainScreen by remember { mutableStateOf(false) }
+
+    if (showMainScreen) {
+        MainScreen()
+    } else {
+        CheckFirstAccess(
+            navigateToMain = { showMainScreen = true },
+            updateFirstAccessStatus = { viewModel.updateFirstAccessStatus(false) },
+            isFirstAccess = isFirstAccess,
+        )
+    }
+}
+
+@Composable
 fun MainScreen() {
     val navController = rememberNavController()
-    val items = listOf(Screen.Map, Screen.Chat, Screen.Playlist, Screen.User)
 
     Scaffold(
         bottomBar = {
             MoyeeBottomNavigationView(
-                items = items,
+                items = listOf(Screen.Map, Screen.Chat, Screen.Playlist, Screen.User),
                 navController = navController,
                 onItemClick = { screen ->
                     navController.navigate(screen.route) {
@@ -70,6 +93,13 @@ fun MainScreen() {
     }
 }
 
+sealed class Screen(val route: String, val icon: ImageVector) {
+    object Map : Screen("map", Icons.Outlined.Map)
+    object Chat : Screen("chat", Icons.Outlined.Chat)
+    object Playlist : Screen("playlist", Icons.Outlined.QueueMusic)
+    object User : Screen("user", Icons.Outlined.Person)
+}
+
 @Composable
 fun MoyeeBottomNavigationView(
     items: List<Screen>,
@@ -92,9 +122,21 @@ fun MoyeeBottomNavigationView(
     }
 }
 
-sealed class Screen(val route: String, val icon: ImageVector) {
-    object Map : Screen("map", Icons.Outlined.Map)
-    object Chat : Screen("chat", Icons.Outlined.Chat)
-    object Playlist : Screen("playlist", Icons.Outlined.QueueMusic)
-    object User : Screen("user", Icons.Outlined.Person)
+@Composable
+private fun CheckFirstAccess(
+    navigateToMain: () -> Unit,
+    updateFirstAccessStatus: () -> Unit,
+    isFirstAccess: Boolean,
+) {
+    if (isFirstAccess) {
+        RequirePermissionScreen(
+            moyeePermission = MoyeePermission.FOREGROUND_LOCATION,
+            onAllPermissionsGranted = {
+                navigateToMain.invoke()
+                updateFirstAccessStatus.invoke()
+            }
+        )
+    } else {
+        navigateToMain.invoke()
+    }
 }
