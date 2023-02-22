@@ -1,5 +1,6 @@
 package com.moyee.android
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.widget.Toast
@@ -63,15 +64,10 @@ fun UserMarker(
     val context = LocalContext.current
     var userImageBitmap by remember { mutableStateOf(context.getBitmap(R.drawable.ic_user_placeholder)) }
 
-    // url 에서 이미지를 로딩 후 비트맵으로 변환
-    Glide.with(context).asBitmap().load(userLocation.imageUrl)
-        .into(object : CustomTarget<Bitmap>() {
-            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                userImageBitmap = resource
-            }
-
-            override fun onLoadCleared(placeholder: Drawable?) {}
-        })
+    context.loadImage(
+        onResourceRoad = { resource -> userImageBitmap = resource },
+        imageUrl = userLocation.imageUrl
+    )
 
     Marker(
         state = MarkerState(position = userLocation.location),
@@ -82,6 +78,27 @@ fun UserMarker(
             imageBitmap = userImageBitmap
         )
     )
+}
+
+/**
+ * url에서 이미지를 로딩하고, 그 이미지를 비트맵으로 변환함
+ *
+ * @param onResourceRoad 반환할 비트맵 이벤트
+ * @param imageUrl 로딩할 이미지 url
+ * */
+fun Context.loadImage(
+    onResourceRoad: (resource: Bitmap) -> Unit,
+    imageUrl: String,
+) {
+    Timber.d("imageUrl=$imageUrl")
+
+    Glide.with(this).asBitmap().load(imageUrl).into(object : CustomTarget<Bitmap>() {
+        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+            onResourceRoad.invoke(resource)
+        }
+
+        override fun onLoadCleared(placeholder: Drawable?) {}
+    })
 }
 
 /**
