@@ -28,7 +28,7 @@ fun Context.checkPermissions(permissions: List<String>): Boolean =
  * @return [Boolean] 권한 허용 여부
  * */
 fun Context.checkPermission(permission: String): Boolean =
-    ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_DENIED
+    ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 
 /**
  * 안드로이드 시스템 설정 앱을 실행함
