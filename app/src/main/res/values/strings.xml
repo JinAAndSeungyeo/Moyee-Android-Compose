@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">Moyee</string>
+
+    <string name="app_permission_access">앱 권한 접근 안내</string>
+    <string name="app_permission_access_description">Moyee 앱을 사용하기 위해서는 아래의 권한이 필요해요!</string>
+    <string name="require_permission">필수 접근 권한</string>
+    <string name="optional_permission">선택 접근 권한</string>
+    <string name="location_info">위치 정보</string>
+    <string name="location_info_permission_description">내 위치 기반 덕질 메이트 정보 조회</string>
+    <string name="notification">알림</string>
+    <string name="notification_permission_description">채팅</string>
+    <string name="photo">사진</string>
+    <string name="photo_permission_description">프로필 사진 등록, 채팅 중 이미지 보내기</string>
+    <string name="okay">알았어요!</string>
+    <string name="confirm">확인</string>
+    <string name="permission_denied_message">%1$s 권한을 허용하지 않으면 해당 기능을 이용할 수 없어요! 권한을 허용해주세요.</string>
+    <string name="permission_system_settings_message">권한 허용 안 하면 앱 이용 못함 ㅅㄱ\n설정창에서 아래 권한들 허락 좀 해주세요 ㅠㅠ</string>
+    <string name="background_location_permission_message">친구들에게 내 위치를 공유하기 위해서는 위치 권한을 항상 허용으로 지정해야 돼요. Moyee -> 권한 -> 위치를 항상 허용으로 변경해주세요!</string>
+    <string name="background_location_permission_button_name">항상 허용으로 바꾸러 가기</string>
+    <string name="foreground_location_permission_message">내 위치를 지도에 표시하기 위해서는 위치 권한을 허용해야 돼요! 위치 권한을 허용해주세요.</string>
+
 </resources>
