@@ -5,7 +5,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
+import androidx.compose.runtime.Composable
 import androidx.core.content.ContextCompat
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
+import com.moyee.android.component.CheckPermissionInSystemSettingsDialog
+import com.moyee.android.component.PermissionDeniedDialog
 
 /**
  * 다중 권한 체크
@@ -29,7 +34,10 @@ fun Context.checkPermission(permission: String): Boolean =
  * 안드로이드 시스템 설정 앱을 실행함
  * */
 fun Context.startSystemSettings() {
-    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${packageName}")).apply {
+    Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.parse("package:${packageName}")
+    ).apply {
         addCategory(Intent.CATEGORY_DEFAULT)
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(this)
