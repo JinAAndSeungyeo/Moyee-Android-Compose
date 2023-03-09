@@ -62,13 +62,6 @@ fun MoyeeTextField(
     )
 }
 
-/**
- * T 값이 null이 아니면 파라미터로 받은 composable function을 실행하고, null이면 null을 반환함
- * */
-@Composable
-fun <T> T.executeOrNull(e: @Composable (T) -> Unit): (@Composable () -> Unit)? =
-    this?.let { data -> { e.invoke(data) } }
-
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 private fun PreviewMoyeeTextField() {
