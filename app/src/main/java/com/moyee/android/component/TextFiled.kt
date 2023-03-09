@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.moyee.android.ui.theme.MoyeeTheme
+import com.moyee.android.util.executeOrNull
 
 data class IconState(
     val vector: ImageVector,
@@ -21,10 +22,14 @@ data class IconState(
     val onClick: () -> Unit,
 )
 
+data class TextFieldState(
+    val value: String,
+    val onTextChange: (String) -> Unit,
+)
+
 @Composable
 fun MoyeeTextField(
-    onTextChange: (String) -> Unit,
-    text: String,
+    textFieldState: TextFieldState,
     placeholder: String? = null,
     label: String? = null,
     leadingIcon: IconState? = null,
@@ -34,9 +39,14 @@ fun MoyeeTextField(
     enabled: Boolean = true,
 ) {
     TextField(
-        value = text,
-        onValueChange = onTextChange,
-        placeholder = placeholder?.executeOrNull { Text(text = it, style = MaterialTheme.typography.button) },
+        value = textFieldState.value,
+        onValueChange = textFieldState.onTextChange,
+        placeholder = placeholder?.executeOrNull {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.button
+            )
+        },
         label = label?.executeOrNull { Text(text = it) },
         singleLine = true,
         shape = RoundedCornerShape(50.dp),
@@ -66,6 +76,9 @@ fun MoyeeTextField(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 private fun PreviewMoyeeTextField() {
     MoyeeTheme {
-        MoyeeTextField(onTextChange = {}, text = "werqwer", placeholder = "안녕하셈욤?????????",)
+        MoyeeTextField(
+            textFieldState = TextFieldState(value = "ㅌㅅㅌ", onTextChange = {}),
+            placeholder = "안녕하셈욤?????????"
+        )
     }
 }
