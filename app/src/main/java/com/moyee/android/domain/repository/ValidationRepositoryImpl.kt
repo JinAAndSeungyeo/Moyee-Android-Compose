@@ -5,8 +5,12 @@ import com.moyee.android.R
 import com.moyee.android.util.Validation
 import com.moyee.android.util.ValidationResult
 import com.moyee.android.util.execute
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class ValidationRepositoryImpl(private val context: Context) : ValidationRepository {
+class ValidationRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context
+) : ValidationRepository {
 
     override fun isIdAvailable(id: String): ValidationResult =
         Validation(
