@@ -32,4 +32,6 @@
     <string name="show_password">show-password</string>
     <string name="complete_register">회원가입 완료!</string>
 
+    <string name="error_input_blank">%1$s 값을 입력해주세요.</string>
+    <string name="error_input_size">%1$s 값은 %2$d자 ~ %3$d자 입력 가능합니다.</string>
 </resources>
