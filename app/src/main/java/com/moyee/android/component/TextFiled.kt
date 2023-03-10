@@ -15,12 +15,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.moyee.android.ui.theme.MoyeeTheme
 import com.moyee.android.util.executeOrNull
+import com.moyee.android.R
 
 data class IconState(
     val vector: ImageVector,
@@ -105,6 +108,33 @@ private fun PreviewMoyeeTextField() {
 }
 
 @Composable
+fun PasswordTextField(
+    passwordState: TextFieldState,
+    errorMessage: String? = null,
+) {
+    var hideVisible by remember { mutableStateOf(true) }
+
+    val (trailingIconVector, trailingIconContentDescription) =
+        if (hideVisible) {
+            Pair(Icons.Outlined.Visibility, stringResource(R.string.hide_password))
+        } else {
+            Pair(Icons.Outlined.VisibilityOff, stringResource(R.string.show_password))
+        }
+
+    MoyeeTextField(
+        textFieldState = passwordState,
+        placeholder = stringResource(R.string.password),
+        trailingIcon = IconState(
+            vector = trailingIconVector,
+            contentDescription = trailingIconContentDescription,
+            onClick = { hideVisible = hideVisible.not() }),
+        visualTransFormation = if (hideVisible) PasswordVisualTransformation() else VisualTransformation.None,
+        errorMessage = errorMessage
+    )
+}
+
+
+@Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 private fun PreviewMoyeeErrorTextField() {
     MoyeeTheme {
@@ -112,6 +142,16 @@ private fun PreviewMoyeeErrorTextField() {
             textFieldState = TextFieldState(value = "ㅌㅅㅌ", onTextChange = {}),
             placeholder = "안녕하셈욤?????????",
             errorMessage = "에러에러에러"
+        )
+    }
+}
+
+@Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+private fun PreviewPasswordTextField() {
+    MoyeeTheme {
+        PasswordTextField(
+            passwordState = TextFieldState(value = "ㅇㅅㅍ", onTextChange = {})
         )
     }
 }
