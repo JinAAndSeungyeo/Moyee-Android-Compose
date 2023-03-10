@@ -1,11 +1,17 @@
 package com.moyee.android.component
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -32,44 +38,59 @@ fun MoyeeTextField(
     textFieldState: TextFieldState,
     placeholder: String? = null,
     label: String? = null,
+    errorMessage: String? = null,
     leadingIcon: IconState? = null,
     trailingIcon: IconState? = null,
     visualTransFormation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
     enabled: Boolean = true,
 ) {
-    TextField(
-        value = textFieldState.value,
-        onValueChange = textFieldState.onTextChange,
-        placeholder = placeholder?.executeOrNull {
-            Text(
-                text = it,
-                style = MaterialTheme.typography.button
+    val isError by rememberSaveable { mutableStateOf(errorMessage.isNullOrBlank().not()) }
+
+    Column {
+        TextField(
+            value = textFieldState.value,
+            onValueChange = textFieldState.onTextChange,
+            placeholder = placeholder?.executeOrNull {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.button
+                )
+            },
+            label = label?.executeOrNull { Text(text = it) },
+            isError = isError,
+            singleLine = true,
+            shape = RoundedCornerShape(50.dp),
+            leadingIcon = leadingIcon?.executeOrNull { state ->
+                IconButton(onClick = state.onClick) {
+                    Icon(imageVector = state.vector, contentDescription = state.contentDescription)
+                }
+            },
+            trailingIcon = trailingIcon?.executeOrNull { state ->
+                IconButton(onClick = state.onClick) {
+                    Icon(imageVector = state.vector, contentDescription = state.contentDescription)
+                }
+            },
+            enabled = enabled,
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.textFieldColors(
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                errorIndicatorColor = Color.Transparent,
+                backgroundColor = Color(0xFF332D41),
+                textColor = Color.White
             )
-        },
-        label = label?.executeOrNull { Text(text = it) },
-        singleLine = true,
-        shape = RoundedCornerShape(50.dp),
-        leadingIcon = leadingIcon?.executeOrNull { state ->
-            IconButton(onClick = state.onClick) {
-                Icon(imageVector = state.vector, contentDescription = state.contentDescription)
-            }
-        },
-        trailingIcon = trailingIcon?.executeOrNull { state ->
-            IconButton(onClick = state.onClick) {
-                Icon(imageVector = state.vector, contentDescription = state.contentDescription)
-            }
-        },
-        enabled = enabled,
-        modifier = Modifier.fillMaxWidth(),
-        colors = TextFieldDefaults.textFieldColors(
-            unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            backgroundColor = Color(0xFF332D41),
-            textColor = Color.White
         )
-    )
+        if (isError) {
+            Text(
+                text = errorMessage!!,
+                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(horizontal = 6.dp)
+            )
+        }
+    }
 }
 
 @Composable
@@ -79,6 +100,18 @@ private fun PreviewMoyeeTextField() {
         MoyeeTextField(
             textFieldState = TextFieldState(value = "ㅌㅅㅌ", onTextChange = {}),
             placeholder = "안녕하셈욤?????????"
+        )
+    }
+}
+
+@Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
+private fun PreviewMoyeeErrorTextField() {
+    MoyeeTheme {
+        MoyeeTextField(
+            textFieldState = TextFieldState(value = "ㅌㅅㅌ", onTextChange = {}),
+            placeholder = "안녕하셈욤?????????",
+            errorMessage = "에러에러에러"
         )
     }
 }
